@@ -11,8 +11,7 @@ interface EtfRecommendationResponse {
     total_income: number;
     total_expense: number;
     available_amount: number;
-    surplus?: number;  // 여유자금 추가
-    surplus_ratio?: number;  // 저축률 추가
+    surplus_ratio?: number;  // 저축률
     recommendation_reason: string;
     items: any[];
 }
@@ -26,11 +25,10 @@ export default function EtfRecommendationPage() {
         totalIncome: number;
         totalExpense: number;
         availableAmount: number;
-        surplus: number;
         surplusRatio: number;
         reason: string;
         apiUsed: string;
-        showAdvancedInfo: boolean;  // 여유 자금, 저축률 표시 여부
+        showAdvancedInfo: boolean;  // 저축률 표시 여부
     } | null>(null);
 
     const fetchEtfRecommendation = async () => {
@@ -107,11 +105,10 @@ export default function EtfRecommendationPage() {
                 totalIncome: result.total_income || 0,
                 totalExpense: result.total_expense || 0,
                 availableAmount: result.available_amount || 0,
-                surplus: result.surplus || result.available_amount || 0,
                 surplusRatio: result.surplus_ratio || 0,
                 reason: result.recommendation_reason || "",
                 apiUsed: showAdvancedInfo ? "recommend" : "etf-info",
-                showAdvancedInfo: showAdvancedInfo  // 여유 자금, 저축률 표시 여부
+                showAdvancedInfo: showAdvancedInfo  // 저축률 표시 여부
             });
 
             // ETF 데이터 가공
@@ -175,7 +172,7 @@ export default function EtfRecommendationPage() {
                     {/* 추천 정보 카드 */}
                     {recommendationInfo && !loading && (
                         <div className="px-6 py-4 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-900/20 dark:to-pink-900/20 border-b border-zinc-200 dark:border-zinc-700">
-                            <div className={`grid grid-cols-2 ${recommendationInfo.showAdvancedInfo ? 'md:grid-cols-5' : 'md:grid-cols-3'} gap-4 mb-4`}>
+                            <div className={`grid grid-cols-2 ${recommendationInfo.showAdvancedInfo ? 'md:grid-cols-4' : 'md:grid-cols-3'} gap-4 mb-4`}>
                                 <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow">
                                     <p className="text-sm text-zinc-600 dark:text-zinc-400">총 소득</p>
                                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -194,22 +191,14 @@ export default function EtfRecommendationPage() {
                                         {(recommendationInfo.availableAmount || 0).toLocaleString()}원
                                     </p>
                                 </div>
-                                {/* 여유 자금과 저축률은 showAdvancedInfo가 true일 때만 표시 */}
+                                {/* 저축률은 showAdvancedInfo가 true일 때만 표시 */}
                                 {recommendationInfo.showAdvancedInfo && (
-                                    <>
-                                        <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow">
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-400">여유 자금</p>
-                                            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                                                {(recommendationInfo.surplus || 0).toLocaleString()}원
-                                            </p>
-                                        </div>
-                                        <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow">
-                                            <p className="text-sm text-zinc-600 dark:text-zinc-400">저축률</p>
-                                            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                                                {(recommendationInfo.surplusRatio || 0).toFixed(1)}%
-                                            </p>
-                                        </div>
-                                    </>
+                                    <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow">
+                                        <p className="text-sm text-zinc-600 dark:text-zinc-400">저축률</p>
+                                        <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                                            {(recommendationInfo.surplusRatio || 0).toFixed(1)}%
+                                        </p>
+                                    </div>
                                 )}
                             </div>
                             {/* 추천된 ETF 표 */}
